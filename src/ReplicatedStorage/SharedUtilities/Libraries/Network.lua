@@ -1,13 +1,13 @@
 --!strict
+local import = require(game.ReplicatedStorage:WaitForChild("SharedUtilities"):WaitForChild("Utilities"):WaitForChild("Import")).registerFile(script);
 
 -- Containers
 local NetworkFolder: Instance = game:GetService("ReplicatedStorage"):WaitForChild("Network");
 local RemoteEvents: Instance = NetworkFolder:WaitForChild("RemoteEvents");
 local RemoteFunctions: Instance = NetworkFolder:WaitForChild("RemoteFunctions");
-local _Package = script;
 
 -- Modules
-local PathUtility = require(_Package.Paths);
+local PathUtility = import("/Paths");
 
 -- Declarations
 local IsServer: boolean = game:GetService("RunService"):IsServer();
