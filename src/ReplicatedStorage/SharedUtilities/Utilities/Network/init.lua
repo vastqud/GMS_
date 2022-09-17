@@ -1,9 +1,9 @@
 --!strict
 
 -- Containers
-local NetworkFolder: Folder = game:GetService("ReplicatedStorage"):WaitForChild("Network");
-local RemoteEvents = NetworkFolder:WaitForChild("RemoteEvents");
-local RemoteFunctions = NetworkFolder:WaitForChild("RemoteFunctions");
+local NetworkFolder: Instance = game:GetService("ReplicatedStorage"):WaitForChild("Network");
+local RemoteEvents: Instance = NetworkFolder:WaitForChild("RemoteEvents");
+local RemoteFunctions: Instance = NetworkFolder:WaitForChild("RemoteFunctions");
 local _Package = script;
 
 -- Modules
