@@ -8,6 +8,7 @@ type PathUtil = {
 };
 
 local PathUtil: PathUtil = {} :: any;
+PathUtil._Timeout = 10
 
 function PathUtil:FindInstanceFromPath(path: string, root: Instance?, timeOutLastBranch: number?): Instance?  --  Assumes that the path does indeed exist at build-time (yields for loading clients)
     if not root then
@@ -19,7 +20,7 @@ function PathUtil:FindInstanceFromPath(path: string, root: Instance?, timeOutLas
 
     for index, n in paths do
         local previousCurrent = current;
-        local timeout = if index == #paths then timeOutLastBranch else nil;
+        local timeout = if index == #paths then (timeOutLastBranch or self._Timeout) else self._Timeout;
 
         current = if IsServer then current:FindFirstChild(n) else current:WaitForChild(n, timeout);  --  Yields on client in the case that the game hasn't fully loaded
 
