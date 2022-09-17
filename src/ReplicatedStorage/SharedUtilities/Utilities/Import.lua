@@ -1,5 +1,9 @@
 --!strict
-local Import = {};
+type Importer = {
+    registerFile: (file: Instance) -> any
+};
+
+local Import: Importer = {} :: any;
 
 local PathUtility;
 local import;
@@ -20,4 +24,4 @@ end;
 import = Import.registerFile(script);
 PathUtility = import("SharedUtilities/Utilities/Paths");
 
-return Import;
+return Import :: Importer;
