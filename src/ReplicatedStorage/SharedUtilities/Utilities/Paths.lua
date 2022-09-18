@@ -2,13 +2,8 @@
 local _ReplicatedStorage = game:GetService("ReplicatedStorage");
 local IsServer: boolean = game:GetService("RunService"):IsServer();
 
-type PathUtil = {
-    _Timeout: number,
-    FindInstanceFromPath: (self: PathUtil, path: string, root: Instance?, timeOutLastBranch: number?) -> Instance?
-};
-
-local PathUtil: PathUtil = {} :: any;
-PathUtil._Timeout = 10
+local PathUtil = {};
+PathUtil._Timeout = 10;
 
 function PathUtil:FindInstanceFromPath(path: string, root: Instance?, timeOutLastBranch: number?): Instance?  --  Assumes that the path does indeed exist at build-time (yields for loading clients)
     if not root then
@@ -16,7 +11,7 @@ function PathUtil:FindInstanceFromPath(path: string, root: Instance?, timeOutLas
     end;
 
     local paths = string.split(path, "/");
-    local current: Instance = root :: Instance;
+    local current = root;
 
     for index, n in paths do
         local previousCurrent = current;
@@ -33,4 +28,4 @@ function PathUtil:FindInstanceFromPath(path: string, root: Instance?, timeOutLas
     return current;
 end;
 
-return PathUtil :: PathUtil;
+return PathUtil;
