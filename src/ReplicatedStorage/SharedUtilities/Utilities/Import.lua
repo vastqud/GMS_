@@ -1,19 +1,19 @@
 --!strict
-local Import = {};
-
-local ValidRoots = {
-    ["ServerScriptService"] = {
-        Aliases = {
-            "server"
+local Import = {
+    ValidRoots = {
+        ["ServerScriptService"] = {
+            Aliases = {
+                "server"
+            },
+            Location = game:GetService("ServerScriptService")
         },
-        Location = game:GetService("ServerScriptService")
-    },
-    ["ReplicatedStorage"] = {
-        Aliases = {
-            "shared",
-            "client"
-        },
-        Location = game:GetService("ReplicatedStorage")
+        ["ReplicatedStorage"] = {
+            Aliases = {
+                "shared",
+                "client"
+            },
+            Location = game:GetService("ReplicatedStorage")
+        }
     }
 };
 
@@ -28,14 +28,14 @@ local import;
         Once the target file is found, the function will require and return that result.
 ]]
 
-local function getRoot(root: string): Instance?
+function Import:_getRoot(root: string): Instance?
     local lower_root: string = string.lower(root);
 
-    if ValidRoots[root] then
-        return ValidRoots[root].Location;
+    if self.ValidRoots[root] then
+        return self.ValidRoots[root].Location;
     end;
 
-    for rootName, data in pairs(ValidRoots) do
+    for rootName, data in pairs(self.ValidRoots) do
         local lower_name: string = string.lower(rootName);
 
         if lower_root == lower_name then
@@ -52,7 +52,7 @@ local function getRoot(root: string): Instance?
     return;
 end
 
-function Import.registerFile(file: Instance): any
+function Import:registerFile(file: Instance): any
     return function(path: string): any
         local paths = string.split(path, "/");
         local root;
@@ -60,7 +60,7 @@ function Import.registerFile(file: Instance): any
         if paths[1] == "" then
             root = file;
         else
-            root = getRoot(paths[1])
+            root = self:_getRoot(paths[1])
         end;
         
         local accessedFile: Instance? = PathUtility:FindInstanceFromPath(path, root);
@@ -71,7 +71,7 @@ function Import.registerFile(file: Instance): any
     end;
 end;
 
-import = Import.registerFile(script);
+import = Import:registerFile(script);
 PathUtility = import("SharedUtilities/Utilities/Paths");
 
 return Import;

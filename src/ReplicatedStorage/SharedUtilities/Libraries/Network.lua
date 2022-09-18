@@ -1,5 +1,5 @@
 --!strict
-local import = require(game.ReplicatedStorage:WaitForChild("SharedUtilities"):WaitForChild("Utilities"):WaitForChild("Import")).registerFile(script);
+local import = require(game.ReplicatedStorage:WaitForChild("SharedUtilities"):WaitForChild("Utilities"):WaitForChild("Import")):registerFile(script);
 
 -- Containers
 local NetworkFolder = game:GetService("ReplicatedStorage"):WaitForChild("Network");
