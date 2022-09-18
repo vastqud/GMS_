@@ -9,6 +9,7 @@ function PathUtil:FindInstanceFromPath(path: string, root: Instance?, timeOutLas
     if not root then
         root = _ReplicatedStorage;
     end;
+    assert(root ~= nil, "Root does not exist");
 
     local paths = string.split(path, "/");
     local current = root;
