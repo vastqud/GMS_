@@ -31,11 +31,11 @@ local import;
 function Import:_getRoot(root: string): Instance?
     local lower_root: string = string.lower(root);
 
-    if self.ValidRoots[root] then
+    if self.ValidRoots[root] then  --  If the root name is in the ValidRoots table directly
         return self.ValidRoots[root].Location;
     end;
 
-    for rootName, data in pairs(self.ValidRoots) do
+    for rootName, data in pairs(self.ValidRoots) do  --  Not found in table, must either not be a root or be using an alias
         local lower_name: string = string.lower(rootName);
 
         if lower_root == lower_name then
