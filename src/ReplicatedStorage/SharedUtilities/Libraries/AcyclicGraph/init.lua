@@ -5,7 +5,6 @@ local Types = require(script.Types);
 export type Vertex = Types.Vertex;
 export type AcyclicGraph = Types.AcyclicGraph
 
-
 local Graph = {};
 Graph.prototype = {};
 
