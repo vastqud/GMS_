@@ -9,7 +9,7 @@ export type AcyclicGraph = Types.AcyclicGraph
 local Graph = {};
 Graph.prototype = {};
 
-local function visit(vertex: Vertex, fn: (Vertex, {string}) -> nil, visited: {[string]: boolean}?, path: {string}?)
+local function dfs(vertex: Vertex, fn: (Vertex, {string}) -> nil, visited: {[string]: boolean}?, path: {string}?)
 	if not visited then
 		visited = {}
 	end
@@ -27,19 +27,15 @@ local function visit(vertex: Vertex, fn: (Vertex, {string}) -> nil, visited: {[s
 		return
 	end
 
-	-- push
 	table.insert(path, name);
-
 	visited[name] = true
 
 	local parents = vertex.Parents
 	for id, parentVertex in pairs(parents) do
-		visit(parentVertex, fn, visited, path)
+		dfs(parentVertex, fn, visited, path)
 	end
 
 	fn(vertex, path)
-
-	-- pop
 	table.remove(path, #path)
 end
 
@@ -51,7 +47,7 @@ function Graph.new(name: string): AcyclicGraph
 
     return self :: any;
 end;
-
+/
 --  Internal method for retrieving a vertex with a given id or creating a new one
 function Graph.prototype:GetVertex(id: string): Vertex
     if self.Vertices[id] then return self.Vertices[id]; end;  --  A vertex with that id already exists, return it
@@ -88,7 +84,7 @@ function Graph.prototype:CreateEdge(startId: string, targetId: string): nil
 		end;
 	end;
 
-    visit(startVertex, checkCycle);
+    dfs(startVertex, checkCycle);
 
     startVertex:SetAsParentTo(targetVertex);
     return;
