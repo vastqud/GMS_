@@ -1,19 +1,12 @@
 --!strict
-export type Vertex = {
-    Parents: {[string]: Vertex},
-    ValueData: {[string]: any?},
-    Id: string,
-    Graph: any,
-    HasChildren: boolean,
-    SetVertexData: (self: Vertex, dataIndex: string, data: any?) -> nil,
-    HasParent: (self: Vertex, testVertex: Vertex) -> boolean,
-    SetAsParentTo: (self: Vertex, vertex: Vertex) -> nil
-};
+local Types = require(script.Parent.Types);
+type Vertex = Types.Vertex
+type AcyclicGraph = Types.AcyclicGraph
 
 local VertexClass = {};
 VertexClass.prototype = {};
 
-function VertexClass.new(id: string, graph: any): Vertex
+function VertexClass.new(id: string, graph: AcyclicGraph): Vertex
     local self = setmetatable({
         Parents = {},
         ValueData = {},

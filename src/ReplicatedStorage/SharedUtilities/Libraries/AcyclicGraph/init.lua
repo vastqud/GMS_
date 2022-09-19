@@ -1,14 +1,10 @@
 --!strict
 local Vertices = require(script.Vertex);
+local Types = require(script.Types);
 
-type Vertex = Vertices.Vertex;
-export type AcyclicGraph = {
-    Vertices: {[string]: Vertex},
-    Name: string,
-    GetVertex: (self: Vertex, id: string) -> Vertex,
-    MapNewVertex: (self: Vertex, id: string, data: {[string]: any?}?) -> Vertex,
-    CreateEdge: (self: Vertex, startId: string, targetId: string) -> nil
-};
+export type Vertex = Types.Vertex;
+export type AcyclicGraph = Types.AcyclicGraph
+
 
 local Graph = {};
 Graph.prototype = {};
@@ -67,7 +63,7 @@ function Graph.prototype:GetVertex(id: string): Vertex
 end;
 
 --  Creates a new vertex (or returns an existing one), then sets its data
-function Graph.prototype:MapNewVertex(id: string, data: {[string]: any?}?): Vertex
+function Graph.prototype:MapNewVertex(id: string, data: {[string]: any}?): Vertex
     local thisVertex = self:GetVertex(id, data);
 
     if data then
