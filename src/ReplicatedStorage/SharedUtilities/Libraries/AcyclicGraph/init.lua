@@ -47,7 +47,7 @@ function Graph.new(name: string): AcyclicGraph
 
     return self :: any;
 end;
-/
+
 --  Internal method for retrieving a vertex with a given id or creating a new one
 function Graph.prototype:GetVertex(id: string): Vertex
     if self.Vertices[id] then return self.Vertices[id]; end;  --  A vertex with that id already exists, return it
