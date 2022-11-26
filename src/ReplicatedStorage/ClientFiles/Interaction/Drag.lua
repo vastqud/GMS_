@@ -54,7 +54,7 @@ function Drag.initiateDrag(_, state, object) --checks if the mouse is over a dra
 
     local objectClicked, position = Drag.queryRaycast()
 
-    if (not objectClicked) or (not CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract)) then --not interactable
+    if (not objectClicked) or (not CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract)) then --not interactable or raycast didnt hit anything
         return Enum.ContextActionResult.Pass
     elseif objectClicked and CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract) then --object is interactable
         if not objectClicked:GetAttribute(GlobalTags.Draggable) then --not a draggable object
