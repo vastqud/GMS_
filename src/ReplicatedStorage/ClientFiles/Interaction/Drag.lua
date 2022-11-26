@@ -10,6 +10,7 @@ local SharedUtilities = ReplicatedStorage.SharedUtilities
 local GlobalTags = require(SharedData.GlobalConstants.Tags)
 local Constants = require(SharedData.GlobalConstants.Constants)
 local AttachmentsLib = require(SharedUtilities.Libraries.Attachments)
+local Permissions = require(SharedUtilities.Utilities.Permissions)
 
 local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -53,10 +54,12 @@ function Drag.initiateDrag(_, state, object) --checks if the mouse is over a dra
 
     local objectClicked, position = Drag.queryRaycast()
 
-    if (not objectClicked) or (not CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract)) then
+    if (not objectClicked) or (not CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract)) then --not interactable
         return Enum.ContextActionResult.Pass
-    elseif objectClicked and CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract) then
-        if not objectClicked:GetAttribute(GlobalTags.Draggable) then
+    elseif objectClicked and CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract) then --object is interactable
+        if not objectClicked:GetAttribute(GlobalTags.Draggable) then --not a draggable object
+            return Enum.ContextActionResult.Pass
+        elseif not Permissions:IsPlayerAuthorizedWith(Player, objectClicked, Permissions.Enums.Drag) then --is draggable, but player does not have permission to do so
             return Enum.ContextActionResult.Pass
         end
     end
