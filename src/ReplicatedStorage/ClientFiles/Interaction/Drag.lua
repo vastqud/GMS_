@@ -38,7 +38,8 @@ local function createPhysicsMoverAtPoint(object, point) --creates the alignposit
 end
 
 function Drag.queryRaycast() --queries mouse position
-    local mouseX, mouseY = UserInputService:GetMouseLocation()
+    local loc = UserInputService:GetMouseLocation()
+    local mouseX, mouseY = loc.X, loc.Y
     local unitRay = Camera:ScreenPointToRay(mouseX, mouseY)
     local raycastResult = workspace:Raycast(unitRay.Origin, unitRay.Direction*Constants.DragDistance, raycastParams)
 
@@ -49,7 +50,7 @@ function Drag.queryRaycast() --queries mouse position
     end
 end
 
-function Drag.initiateDrag(_, state, object) --checks if the mouse is over a draggable object when clicked
+function Drag.initiateDrag() --checks if the mouse is over a draggable object when clicked
     if Drag.Dragging then return Enum.ContextActionResult.Pass end
 
     local objectClicked, position = Drag.queryRaycast()
@@ -81,9 +82,17 @@ function Drag.endDrag()
     Drag.Dragging = false
 end
 
+function Drag.processEvent(_, state, _)
+    if state == Enum.UserInputState.Begin then
+        Drag.initiateDrag()
+    elseif state == Enum.UserInputState.End then
+        Drag.endDrag()
+    end
+end
+
 function Drag.bind(bind)
     if bind then
-        ContextActionService:BindAction("ClickToDrag", Drag.initiateDrag, false, Enum.UserInputType.MouseButton1, Enum.UserInputState.Begin)
+        ContextActionService:BindAction("ClickToDrag", Drag.processEvent, false, Enum.UserInputType.MouseButton1)
         Drag.UpdateConnection = RunService.Heartbeat:Connect(Drag.update)
     else
         ContextActionService:UnbindAction("ClickToDrag")
@@ -107,7 +116,7 @@ do
         raycastParams.FilterDescendantsInstances = {char}
     end)
 
-    ContextActionService:BindAction("EndDrag", drag.endDrag, false, Enum.UserInputType.MouseButton1, Enum.UserInputState.End) --this should always be bound, so it is not bound on Drag.bind
+    ContextActionService:BindAction("EndDrag", Drag.processEvent, false, Enum.UserInputType.MouseButton1) --this should always be bound, so it is not bound on Drag.bind
     Drag.bind(true) --initialize module
 end
 
