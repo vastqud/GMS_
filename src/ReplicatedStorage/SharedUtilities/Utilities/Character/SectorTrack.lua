@@ -7,8 +7,17 @@ local UP = Vector3.new(0, 1, 0)
 
 local Metadata = ReplicatedStorage.SharedData.Metadata
 local CharacterUtils = ReplicatedStorage.SharedUtilities.Utilities.Character
+local ClientFiles = ReplicatedStorage.ClientFiles
 local VerifyCharacterExists = require(CharacterUtils.VerifyCharacterExists)
 local SectorData = require(Metadata.Sector)
+local HudController
+
+do
+    if not IS_SERVER then
+        HudController = require(ClientFiles.UI.HUD)
+    end
+end
+
 SectorData.init()
 
 local raycastParams = RaycastParams.new()
@@ -28,7 +37,7 @@ function SectorTrack.QueryPlayerSector(player, callback)
         local raycastResult = workspace:Raycast(root.CFrame.Position, UP*200, raycastParams)
         if raycastResult and raycastResult.Instance then
             local sector = raycastResult.Instance.Parent.Name
-            callback(sector)
+            pcall(callback, sector)
 
             last_sector = sector
         end
@@ -45,7 +54,7 @@ function SectorTrack.Poll()
     else
         SectorTrack.QueryPlayerSector(Players.LocalPlayer, function(newSector)
             if newSector ~= last_sector then
-                print("entering new sector")
+                HudController.ChangeSector(newSector, SectorData.GetSectorData(newSector))
             end
         end)
     end
