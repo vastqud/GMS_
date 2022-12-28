@@ -3,6 +3,7 @@ local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local VerifyCharacterExists = require(ReplicatedStorage.SharedUtilities.Utilities.Character.VerifyCharacterExists)
+local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags)
 local VitalsRender = require(script.VitalsRender)
 local SectorAnimation = require(script.SectorAnimation)
 local LeaderboardHandler = require(script.Leaderboard)
@@ -57,7 +58,16 @@ function HudController.InitConnections()
 
     arrow.ImageButton.MouseButton1Click:Connect(function()
         HudController.ToggleLeaderboard()
+
+        if FastFlags.Health_Debug then
+            ReplicatedStorage.Network.Events.Health_Debug:FireServer(1)
+        end
     end)
+    if FastFlags.Health_Debug then
+        arrow.ImageButton.MouseButton2Click:Connect(function()
+            ReplicatedStorage.Network.Events.Health_Debug:FireServer(-1)
+        end)
+    end
 
     Player.CharacterAdded:Connect(characterAdded)
     Player:GetAttributeChangedSignal("Armor"):Connect(function()
