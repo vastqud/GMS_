@@ -3,6 +3,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
 
 local SharedUtils = ReplicatedStorage:WaitForChild("SharedUtilities")
 local ClientFiles = ReplicatedStorage:WaitForChild("ClientFiles")

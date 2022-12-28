@@ -1,15 +1,29 @@
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 local ContextActionService = game:GetService("ContextActionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local VerifyCharacterExists = require(ReplicatedStorage.SharedUtilities.Utilities.Character.VerifyCharacterExists)
+local VitalsRender = require(script.VitalsRender)
 local SectorAnimation = require(script.SectorAnimation)
 local LeaderboardHandler = require(script.Leaderboard)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player.PlayerGui
+local Char
 
 local HudController = {}
 HudController.HUD = PlayerGui:WaitForChild("HUD")
+
+local function characterAdded(char)
+    Char = char
+
+    local hum = Char:WaitForChild("Humanoid")
+    hum.HealthChanged:Connect(function()
+        VitalsRender.updateVitalsBar("Health", hum.Health)
+    end)
+    VitalsRender.updateVitalsBar("Health", hum.Health)
+    VitalsRender.updateVitalsBar("Armor", Player:GetAttribute("Armor"))
+end
 
 function HudController.ToggleHud(on) --on should be true or false (otherwise it will be !enabled)
     if (on == true) or (on == false) then
@@ -44,11 +58,23 @@ function HudController.InitConnections()
     arrow.ImageButton.MouseButton1Click:Connect(function()
         HudController.ToggleLeaderboard()
     end)
+
+    Player.CharacterAdded:Connect(characterAdded)
+    Player:GetAttributeChangedSignal("Armor"):Connect(function()
+        VitalsRender.updateVitalsBar("Armor", Player:GetAttribute("Armor"))
+    end)
 end
 
 HudController.ToggleHud(false) --toggle hud off initially
 HudController.InitConnections()
 LeaderboardHandler.init(HudController.HUD.Master.Leaderboard)
+VitalsRender.init(HudController.HUD.Master.Vitals)
 ContextActionService:BindAction("ToggleLeaderboard", HudController.ToggleLeaderboard, false, Enum.KeyCode.Tab)
+
+do
+    if Player.Character then
+        characterAdded(Player.Character)
+    end
+end
 
 return HudController
