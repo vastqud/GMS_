@@ -15,12 +15,30 @@ local Char
 local HudController = {}
 HudController.HUD = PlayerGui:WaitForChild("HUD")
 
+local threshold = 91
+local function changeHurtOverlay(health)
+    local screen = PlayerGui:FindFirstChild("health")
+    if not screen then return end
+
+    if health <= threshold then
+        local amt = (health/threshold)*0.925
+        local transparency = math.clamp(amt, 0, 1)
+        screen.Enabled = true
+        for _, obj in ipairs(screen:GetChildren()) do
+            obj.BackgroundTransparency = transparency
+        end
+    else
+        screen.Enabled = false
+    end
+end
+
 local function characterAdded(char)
     Char = char
 
     local hum = Char:WaitForChild("Humanoid")
     hum.HealthChanged:Connect(function()
         VitalsRender.updateVitalsBar("Health", hum.Health)
+        changeHurtOverlay(hum.Health)
     end)
     VitalsRender.updateVitalsBar("Health", hum.Health)
     VitalsRender.updateVitalsBar("Armor", Player:GetAttribute("Armor"))
