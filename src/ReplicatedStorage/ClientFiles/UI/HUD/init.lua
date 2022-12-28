@@ -36,7 +36,7 @@ end
 
 function HudController.ChangeSector(newSectorName, newSectorData)
     local sectorUi = HudController.HUD.Master.Sector
-    task.spawn(SectorAnimation, newSectorName, newSectorData, sectorUi)
+    task.spawn(SectorAnimation.newSector, newSectorName, newSectorData, sectorUi)
 end
 
 function HudController.ToggleLeaderboard(on, state) --on should be true or false (otherwise it will be !enabled)
@@ -55,6 +55,7 @@ end
 
 function HudController.InitConnections()
     local arrow = HudController.HUD.Master.Leaderboard.Header.Arrow
+    local infoToggle = HudController.HUD.Master.Sector.InfoToggle
 
     arrow.ImageButton.MouseButton1Click:Connect(function()
         HudController.ToggleLeaderboard()
@@ -63,6 +64,10 @@ function HudController.InitConnections()
             ReplicatedStorage.Network.Events.Health_Debug:FireServer(1)
         end
     end)
+    infoToggle.MouseButton1Click:Connect(function()
+        SectorAnimation.infoPane(infoToggle.Parent)
+    end)
+
     if FastFlags.Health_Debug then
         arrow.ImageButton.MouseButton2Click:Connect(function()
             ReplicatedStorage.Network.Events.Health_Debug:FireServer(-1)

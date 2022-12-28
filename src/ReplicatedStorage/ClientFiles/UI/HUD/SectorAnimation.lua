@@ -11,7 +11,10 @@ local BLACK = Color3.fromRGB(0, 0, 0)
 local RED_TRANSPARENCY = 0.8
 local BLACK_TRANSPARENCY = 0.7
 
-local function changeSector(newSectorName, newSectorData, sectorUi)
+local anims = {}
+anims.InfoEnabled = false
+
+function anims.newSector(newSectorName, newSectorData, sectorUi)
     local isProtected = newSectorData.Protected
     local final_transparency = isProtected and BLACK_TRANSPARENCY or RED_TRANSPARENCY
     local inTween = TweenService:Create(sectorUi.Glow, NEW_SECTOR_TWEEN, {ImageTransparency = 0.2})
@@ -30,5 +33,27 @@ local function changeSector(newSectorName, newSectorData, sectorUi)
 
     TweenService:Create(sectorUi.Glow, NEW_SECTOR_TWEEN, {ImageTransparency = final_transparency}):Play()
 end
+--{0.9, 0},{1.5, 0}
+function anims.infoPane(sectorUi)
+    local pane = sectorUi.InfoPane
 
-return changeSector
+    if pane.Visible then --close
+        anims.InfoEnabled = false
+
+        local tween = TweenService:Create(pane, NEW_SECTOR_TWEEN, {Size = UDim2.fromScale(0, 0)})
+        tween:Play()
+        tween.Completed:Wait()
+        tween:Destroy(); tween = nil
+
+        if not anims.InfoEnabled then
+            pane.Visible = false
+        end
+    else --open
+        anims.InfoEnabled = true
+
+        pane.Visible = true
+        TweenService:Create(pane, NEW_SECTOR_TWEEN, {Size = UDim2.fromScale(0.9, 1.5)}):Play()
+    end
+end
+
+return anims
