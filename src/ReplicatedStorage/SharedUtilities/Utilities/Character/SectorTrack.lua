@@ -34,7 +34,7 @@ local last_sector = nil
 function SectorTrack.QueryPlayerSector(player, callback)
     local root = VerifyCharacterExists(player)
     if root then
-        local raycastResult = workspace:Raycast(root.CFrame.Position, UP*200, raycastParams)
+        local raycastResult = workspace:Raycast(root.CFrame.Position, UP*600, raycastParams)
         if raycastResult and raycastResult.Instance then
             local sector = raycastResult.Instance.Parent.Name
             pcall(callback, sector)
