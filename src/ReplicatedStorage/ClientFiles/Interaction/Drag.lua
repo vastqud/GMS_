@@ -7,10 +7,10 @@ local Players = game:GetService("Players")
 
 local SharedData = ReplicatedStorage.SharedData
 local SharedUtilities = ReplicatedStorage.SharedUtilities
-local GlobalTags = require(SharedData.GlobalConstants.Tags)
 local Constants = require(SharedData.GlobalConstants.Constants)
 local AttachmentsLib = require(SharedUtilities.Libraries.Attachments)
 local Permissions = require(SharedUtilities.Utilities.Permissions)
+local Enums = require(SharedUtilities.Libraries.Enums)
 
 local Player = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -22,6 +22,10 @@ raycastParams.IgnoreWater = true
 local Drag = {}
 Drag.Dragging = false
 Drag.UpdateConnection = nil
+Drag.Enums = {
+    GlobalInteractTag = Enums.new("Interact", {}),
+    Draggable = Enums.new("Draggable", {})
+}
 
 local function createPhysicsMoverAtPoint(object, point) --creates the alignposition on the object
     if object:FindFirstChild("DragMover") then return end
@@ -55,10 +59,10 @@ function Drag.initiateDrag() --checks if the mouse is over a draggable object wh
 
     local objectClicked, position = Drag.queryRaycast()
 
-    if (not objectClicked) or (not CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract)) then --not interactable or raycast didnt hit anything
+    if (not objectClicked) or (not CollectionService:HasTag(objectClicked, Drag.Enums.GlobalInteractTag.Name)) then --not interactable or raycast didnt hit anything
         return Enum.ContextActionResult.Pass
-    elseif objectClicked and CollectionService:HasTag(objectClicked, GlobalTags.GlobalInteract) then --object is interactable
-        if not objectClicked:GetAttribute(GlobalTags.Draggable) then --not a draggable object
+    elseif objectClicked and CollectionService:HasTag(objectClicked, Drag.Enums.GlobalInteractTag.Name) then --object is interactable
+        if not objectClicked:GetAttribute(Drag.Enums.Draggable.Name) then --not a draggable object
             return Enum.ContextActionResult.Pass
         elseif not Permissions:IsPlayerAuthorizedWith(Player, objectClicked, Permissions.Enums.Drag) then --is draggable, but player does not have permission to do so
             return Enum.ContextActionResult.Pass

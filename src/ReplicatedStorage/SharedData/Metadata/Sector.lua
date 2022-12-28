@@ -29,9 +29,7 @@ Sectors.SectorData = {
 }
 Sectors.AllSectorBounds = {}
 Sectors.Enums = {
-    SectorBoundPartTag = Enums.new("SectorBoundPartTag", {
-        {Name = "SectorBound"}
-    })
+    SectorBoundPartTag = Enums.new("SectorBound", {})
 }
 Sectors.SectorBoundsUpdated = updated_bind.Event
 
@@ -67,7 +65,7 @@ function Sectors.init()
     end
 end
 
-CollectionService:GetInstanceAddedSignal(tostring(Sectors.Enums.SectorBoundPartTag.SectorBound)):Connect(function(part)
+CollectionService:GetInstanceAddedSignal(Sectors.Enums.SectorBoundPartTag.Name):Connect(function(part)
     local alreadyFound = false
     for _, thisPart in ipairs(Sectors.AllSectorBounds) do
         if thisPart == part then
@@ -81,7 +79,7 @@ CollectionService:GetInstanceAddedSignal(tostring(Sectors.Enums.SectorBoundPartT
     end
 end)
 
-CollectionService:GetInstanceRemovedSignal(tostring(Sectors.Enums.SectorBoundPartTag.SectorBound)):Connect(function(part)
+CollectionService:GetInstanceRemovedSignal(Sectors.Enums.SectorBoundPartTag.Name):Connect(function(part)
     for index, thisPart in ipairs(Sectors.AllSectorBounds) do
         if thisPart == part then
             table.remove(Sectors.AllSectorBounds, index)
