@@ -15,10 +15,10 @@ local Drag = require(ClientFiles.Interaction.Drag) --start click to drag system
 local SectorTrack = require(CharUtils.SectorTrack)
 local HUDController = require(UiFiles.HUD)
 local MovementController = require(ClientFiles.Gameplay.MovementController)
-SectorTrack.init()
 
 repeat task.wait() until game:IsLoaded()
 task.wait(2)
 
+SectorTrack.init()
 HUDController.ToggleHud(true)
 MovementController.EnableSprint(true)

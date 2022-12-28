@@ -1,12 +1,17 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
 
 local Globals = ReplicatedStorage:WaitForChild("SharedData"):WaitForChild("GlobalConstants")
+local Utils = ReplicatedStorage.SharedUtilities.Libraries
 local TypeToInstanceMap = require(Globals.TypeToInstanceMap)
+local Enums = require(Utils.Enums)
 
 local SECTOR_INSTANCES = workspace:FindFirstChild("SectorBounds")
 local SECTOR_CONFIG_TEMPLATE = { --defaults
     Protected = true
 }
+
+local updated_bind = Instance.new("BindableEvent")
 
 local Sectors = {}
 Sectors.SectorData = {
@@ -22,6 +27,13 @@ Sectors.SectorData = {
     Nessus = {},
     Orion = {}
 }
+Sectors.AllSectorBounds = {}
+Sectors.Enums = {
+    SectorBoundPartTag = Enums.new("SectorBoundPartTag", {
+        {Name = "SectorBound"}
+    })
+}
+Sectors.SectorBoundsUpdated = updated_bind.Event
 
 local function fill_data(name, model)
     for dataField, defaultValue in pairs(SECTOR_CONFIG_TEMPLATE) do
@@ -33,18 +45,12 @@ local function fill_data(name, model)
 
         Sectors.SectorData[name][dataField] = model.Configuration:FindFirstChild(dataField).Value
     end
-end
 
-function Sectors.GetAllSectorBounds()
-    local output = {}
-
-    for _, sector_bound_parts in ipairs(SECTOR_INSTANCES:GetChildren()) do
-        for _, part in ipairs(sector_bound_parts:GetChildren()) do
-            table.insert(output, part)
+    for _, obj in ipairs(model:GetChildren()) do
+        if obj:IsA("BasePart") then
+            table.insert(Sectors.AllSectorBounds, obj)
         end
     end
-
-    return output
 end
 
 function Sectors.GetSectorData(name)
@@ -60,5 +66,28 @@ function Sectors.init()
         end
     end
 end
+
+CollectionService:GetInstanceAddedSignal(tostring(Sectors.Enums.SectorBoundPartTag.SectorBound)):Connect(function(part)
+    local alreadyFound = false
+    for _, thisPart in ipairs(Sectors.AllSectorBounds) do
+        if thisPart == part then
+            alreadyFound = true
+        end
+    end
+
+    if not alreadyFound then
+        table.insert(Sectors.AllSectorBounds, part)
+        updated_bind:Fire()
+    end
+end)
+
+CollectionService:GetInstanceRemovedSignal(tostring(Sectors.Enums.SectorBoundPartTag.SectorBound)):Connect(function(part)
+    for index, thisPart in ipairs(Sectors.AllSectorBounds) do
+        if thisPart == part then
+            table.remove(Sectors.AllSectorBounds, index)
+            updated_bind:Fire()
+        end
+    end
+end)
 
 return Sectors

@@ -23,7 +23,7 @@ SectorData.init()
 local raycastParams = RaycastParams.new()
 raycastParams.FilterType = Enum.RaycastFilterType.Whitelist
 raycastParams.IgnoreWater = true
-raycastParams.FilterDescendantsInstances = SectorData.GetAllSectorBounds()
+raycastParams.FilterDescendantsInstances = SectorData.AllSectorBounds
 
 local SectorTrack = {}
 SectorTrack.ServerPollRate = 0.5 --hz
@@ -72,6 +72,10 @@ function SectorTrack.init()
         SectorTrack.Poll()
     end)
 end
+
+SectorData.SectorBoundsUpdated:Connect(function()
+    raycastParams.FilterDescendantsInstances = SectorData.AllSectorBounds
+end)
 
 return SectorTrack
 
