@@ -5,7 +5,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local UIFiles = ReplicatedStorage.ClientFiles.UI
+local GlobalConstants = ReplicatedStorage.SharedData.GlobalConstants
 local HUDController = require(UIFiles.HUD)
+local Constants = require(GlobalConstants.Constants)
 
 local Player = Players.LocalPlayer
 local char = Player.Character or Player.CharacterAdded:Wait()
@@ -14,10 +16,10 @@ local cam = workspace.CurrentCamera
 
 local MovementController = {}
 MovementController.SprintBound = false
-MovementController.MaximumStamina = 100
-MovementController.StaminaDrain = 5 --units/s
-MovementController.StaminaGain = 2
-MovementController.StaminaGainDelay = 3 --s
+MovementController.MaximumStamina = Constants.DefaultMaxStamina
+MovementController.StaminaDrain = Constants.StaminaDrain --units/s
+MovementController.StaminaGain = Constants.StaminaGain
+MovementController.StaminaGainDelay = Constants.StaminaGainDelay --s
 MovementController.Stamina = MovementController.MaximumStamina
 
 local stopped_sprint_time = tick()
