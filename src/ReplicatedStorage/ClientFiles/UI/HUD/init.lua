@@ -57,6 +57,10 @@ function HudController.ChangeSector(newSectorName, newSectorData)
     task.spawn(SectorAnimation.newSector, newSectorName, newSectorData, sectorUi)
 end
 
+function HudController.UpdateVitalsBar(...) --exposed function for other files
+    VitalsRender.updateVitalsBar(...)
+end
+
 function HudController.ToggleLeaderboard(on, state) --on should be true or false (otherwise it will be !enabled)
     if (state) and (state ~= Enum.UserInputState.Begin) then return end
 

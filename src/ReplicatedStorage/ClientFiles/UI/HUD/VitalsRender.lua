@@ -41,8 +41,9 @@ local function makeNewTween(fakeBar, which)
     end)
 end
 
-function renderer.updateVitalsBar(which, newVal)
+function renderer.updateVitalsBar(which, newVal, maximum)
     local which_bar = renderer.Vitals:FindFirstChild(which)
+    if not maximum then maximum = 100 end
 
     if which ~= "Stamina" then
         local lastVal = last_vitals[which]
@@ -86,6 +87,8 @@ function renderer.updateVitalsBar(which, newVal)
         end
 
         last_vitals[which] = newVal
+    else
+        which_bar.Bar.Size = UDim2.fromScale(newVal/maximum, 1)
     end
 end
 
