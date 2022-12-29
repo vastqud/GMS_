@@ -12,9 +12,11 @@ SectorTrack.init()
 
 local function PlayerAdded(player)
     player:SetAttribute("Armor", 75)
-
     local plot = Plots.new(player)
-    plot:TeleportOwner()
+
+    player.CharacterAdded:Connect(function()
+        plot:TeleportOwner()
+    end)
 end
 
 local function PlayerRemoved(player)
