@@ -3,15 +3,22 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 
-local PlayerModules = ServerScriptService.Game.Player
 local SharedUtils = ReplicatedStorage.SharedUtilities
 local CharUtils = SharedUtils.Utilities.Character
 local SectorTrack = require(CharUtils.SectorTrack)
 local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags)
+local Plots = require(ServerScriptService.Game.PlotHandler)
 SectorTrack.init()
 
 local function PlayerAdded(player)
     player:SetAttribute("Armor", 75)
+
+    local plot = Plots.new(player)
+    plot:TeleportOwner()
+end
+
+local function PlayerRemoved(player)
+    Plots.remove(player)
 end
 
 local function returnGameTime(player)
@@ -36,6 +43,7 @@ for _, player in ipairs(Players:GetPlayers()) do
     PlayerAdded(player)
 end
 Players.PlayerAdded:Connect(PlayerAdded)
+Players.PlayerRemoving:Connect(PlayerRemoved)
 
 do
     if FastFlags.Health_Debug then
