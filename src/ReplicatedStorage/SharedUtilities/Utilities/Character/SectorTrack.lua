@@ -10,6 +10,7 @@ local CharacterUtils = ReplicatedStorage.SharedUtilities.Utilities.Character
 local ClientFiles = ReplicatedStorage.ClientFiles
 local VerifyCharacterExists = require(CharacterUtils.VerifyCharacterExists)
 local SectorData = require(Metadata.Sector)
+local RequestNeverStreamOut = require(ReplicatedStorage.SharedUtilities.Utilities.Misc.RequestNeverStreamOut)
 local HudController
 
 do
@@ -71,6 +72,19 @@ function SectorTrack.init()
     
         SectorTrack.Poll()
     end)
+
+    if not IS_SERVER then 
+        local clone = RequestNeverStreamOut.RequestFromClient(workspace:FindFirstChild("SectorBounds")):Clone()
+
+        if clone then
+            local name = clone.Name
+
+            workspace:FindFirstChild("SectorBounds"):Destroy()
+            clone.Parent = workspace; clone.Name = "sectorboundsclient"
+
+            RequestNeverStreamOut.FinishedClient(name)
+        end
+    end
 end
 
 SectorData.SectorBoundsUpdated:Connect(function()
