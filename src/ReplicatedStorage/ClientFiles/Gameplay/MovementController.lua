@@ -8,11 +8,16 @@ local UIFiles = ReplicatedStorage.ClientFiles.UI
 local GlobalConstants = ReplicatedStorage.SharedData.GlobalConstants
 local HUDController = require(UIFiles.HUD)
 local Constants = require(GlobalConstants.Constants)
+local MathExtended = require(ReplicatedStorage.SharedUtilities.Libraries.Math)
+local ControlModule = require(Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
 
 local Player = Players.LocalPlayer
 local char = Player.Character or Player.CharacterAdded:Wait()
+local hum = char:WaitForChild("Humanoid"); hum.WalkSpeed = 0
 local sprinting = false
 local cam = workspace.CurrentCamera
+
+local WALKSPEED_TARGET = 0
 
 local MovementController = {}
 MovementController.SprintBound = false
@@ -26,9 +31,8 @@ local stopped_sprint_time = tick()
 
 local function handleSprint(on)
 	if not char then return end
-	if not char:FindFirstChild("Humanoid") then return end
+	if not hum then return end
 	if not char.PrimaryPart then return end
-	local hum = char.Humanoid
 
 	if on then
 		if char.PrimaryPart.Velocity.Magnitude <= 5 then return end
@@ -37,19 +41,32 @@ local function handleSprint(on)
         if MovementController.Stamina <= 0 then return end
 
 		sprinting = true
-		hum.WalkSpeed = 19.75
 		TweenService:Create(cam, TweenInfo.new(0.35), {FieldOfView = 75}):Play()
 	else
 		if not sprinting then return end
 
 		sprinting = false
-		hum.WalkSpeed = 14
         stopped_sprint_time = tick()
 		TweenService:Create(cam, TweenInfo.new(0.35), {FieldOfView = 70}):Play()
 	end
 end
 
+local function updateWalkspeed(dt)
+    local moveVector = ControlModule:GetMoveVector()
+
+    if moveVector.Magnitude >= 0.3 then
+        WALKSPEED_TARGET = sprinting and Constants.SprintWalkspeed or Constants.DefaultWalkspeed
+    else
+        WALKSPEED_TARGET = 0
+    end
+
+    hum.WalkSpeed = MathExtended.lerp(hum.WalkSpeed, WALKSPEED_TARGET, dt*4.5)
+end
+
 local function update_stamina(dt)
+    if not hum then return end
+
+    updateWalkspeed(dt)
     local updated_raw = MovementController.Stamina --no change by default
 
     if sprinting then
@@ -90,6 +107,8 @@ end
 
 Player.CharacterAdded:Connect(function(chara)
     char = chara
+    hum = char:WaitForChild("Humanoid")
+    hum.WalkSpeed = 0
 end)
 RunService.Heartbeat:Connect(update_stamina)
 
