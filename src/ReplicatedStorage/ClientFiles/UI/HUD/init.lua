@@ -128,13 +128,13 @@ function HudController.InitConnections()
     end)
 end
 
-HudController.ToggleHud(false) --toggle hud off initially
-HudController.InitConnections()
-LeaderboardHandler.init(HudController.HUD.Master.Leaderboard)
-VitalsRender.init(HudController.HUD.Master.Vitals)
-ContextActionService:BindAction("ToggleLeaderboard", HudController.ToggleLeaderboard, false, Enum.KeyCode.Tab)
-
 do
+    HudController.ToggleHud(false) --toggle hud off initially
+    HudController.InitConnections()
+    LeaderboardHandler.init(HudController.HUD.Master.Leaderboard)
+    VitalsRender.init(HudController.HUD.Master.Vitals)
+    ContextActionService:BindAction("ToggleLeaderboard", HudController.ToggleLeaderboard, false, Enum.KeyCode.Tab)
+
     if Player.Character then
         characterAdded(Player.Character)
     end
