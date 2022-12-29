@@ -35,7 +35,6 @@ local function handleSprint(on)
 	if not char.PrimaryPart then return end
 
 	if on then
-		if char.PrimaryPart.Velocity.Magnitude <= 5 then return end
 		if hum.SeatPart then return end
 		if sprinting then return end
         if MovementController.Stamina <= 0 then return end
