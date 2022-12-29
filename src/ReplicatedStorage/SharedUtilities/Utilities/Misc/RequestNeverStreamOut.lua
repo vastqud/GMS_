@@ -76,7 +76,7 @@ do
         GET_DESCENDANTS.OnServerInvoke = NeverStreamOut.ReturnDescendants
         FINISHED_REMOTE.OnServerEvent:Connect(function(player, name)
             if STREAM_BUFFER:FindFirstChild(name) then
-                STREAM_BUFFER:FindFirstChild(name):Destroy()
+                --STREAM_BUFFER:FindFirstChild(name):Destroy()
             end
         end)
     end
