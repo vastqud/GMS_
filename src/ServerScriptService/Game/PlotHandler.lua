@@ -2,7 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local PLOT_MODELS = workspace:FindFirstChild("Plots")
-local TELEPORT_OFFSET = Vector3.new(0, 10, 0)
+local RAY_PARAMS = RaycastParams.new()
+local DOWN = Vector3.new(0, -1, 0)
+local TELEPORT_OFFSET = Vector3.new(0, 15, 0)
 
 local Plots = {}
 Plots.prototype = {}
@@ -14,6 +16,15 @@ local function findVacantPlot()
             return model
         end
     end
+end
+
+local function verifyClientLoaded(player)
+    local plot = Plots.find(player)
+    if not plot then return end
+    if plot.Loaded then return end
+
+    plot.Loaded = true
+    plot.LoadedBindable:Fire()
 end
 
 function Plots.find(owner)
@@ -39,6 +50,10 @@ function Plots.new(owner)
     self.Owner = owner
     self.Model = findVacantPlot()
 
+    self.Loaded = false
+    self.LoadedBindable = Instance.new("BindableEvent")
+    self.OnLoaded = self.LoadedBindable.Event
+
     self.Model:SetAttribute("Owner", owner.UserId)
 
     Plots.list[owner.UserId] = self
@@ -47,18 +62,39 @@ function Plots.new(owner)
     return self
 end
 
-function Plots.prototype:TeleportOwner()
+function Plots.prototype:Load()
+    task.spawn(function()
+        local rand = Random.new()
+        for i = 1, 5 do
+            local offset = Vector3.new(rand:NextInteger(-50, 50), 0, rand:NextInteger(-50, 50))
+            local loaded_model = ReplicatedStorage.testmodel:Clone()
+            loaded_model:SetPrimaryPartCFrame(CFrame.new(self.Model.PrimaryPart.Position + offset))
+            loaded_model.Parent = self.Model
+        end
+
+        ReplicatedStorage.Network.Events.LoadPlotClient:FireClient(self.Owner, self.Model, #self.Model:GetDescendants())
+        self.Owner:RequestStreamAroundAsync(self.Model.PrimaryPart.Position)
+    end)
+end
+
+function Plots.prototype:TeleportOwnerBlocking()
     local char = self.Owner.Character
     if not char then
         char = self.Owner.CharacterAdded:Wait()
     end
+    if not self.Loaded then self.OnLoaded:Wait() end
     task.wait(0.1)
 
-    char:SetPrimaryPartCFrame(CFrame.new(self.Model.PrimaryPart.Position+TELEPORT_OFFSET))
+    local origin = self.Model.PrimaryPart.Position + Vector3.new(0, 200, 0)
+    local result = workspace:Raycast(origin, DOWN * 205, RAY_PARAMS)
+    local pos = result.Position + TELEPORT_OFFSET
+    char:SetPrimaryPartCFrame(CFrame.new(pos))
 end
 
 function Plots.prototype:Cleanup()
     self.Model:SetAttribute("Owner", nil)
 end
+
+ReplicatedStorage.Network.Events.LoadPlotClient.OnServerEvent:Connect(verifyClientLoaded)
 
 return Plots
