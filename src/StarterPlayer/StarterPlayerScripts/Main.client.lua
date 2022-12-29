@@ -19,6 +19,6 @@ local MovementController = require(ClientFiles.Gameplay.MovementController)
 repeat task.wait() until game:IsLoaded()
 task.wait(2)
 
-SectorTrack.init()
+SectorTrack.init() --yields quite a bit, probably could be done during a loading screen
 HUDController.ToggleHud(true)
 MovementController.EnableSprint(true)
