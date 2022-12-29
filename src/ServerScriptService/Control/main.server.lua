@@ -1,6 +1,7 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 
 local PlayerModules = ServerScriptService.Game.Player
 local SharedUtils = ReplicatedStorage.SharedUtilities
@@ -11,6 +12,24 @@ SectorTrack.init()
 
 local function PlayerAdded(player)
     player:SetAttribute("Armor", 75)
+end
+
+local function returnGameTime(player)
+    return workspace.DistributedGameTime
+end
+
+local function returnRegion(player)
+    local url = "http://ip-api.com/json/"
+    
+    local getasyncinfo = HttpService:GetAsync(url) 
+    local decodedinfo = HttpService:JSONDecode(getasyncinfo) 
+
+    if not decodedinfo then return "N/A" end
+
+    local regionName = decodedinfo.regionName or "N/A"
+    local city = decodedinfo.city or "N/A"
+    
+    return city .. ", " .. regionName
 end
 
 for _, player in ipairs(Players:GetPlayers()) do
@@ -25,3 +44,6 @@ do
         end)
     end
 end
+
+ReplicatedStorage.Network.Functions.GetGameTime.OnServerInvoke = returnGameTime
+ReplicatedStorage.Network.Functions.GetRegion.OnServerInvoke = returnRegion

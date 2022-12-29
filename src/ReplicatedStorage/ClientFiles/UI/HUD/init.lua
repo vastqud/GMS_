@@ -7,6 +7,8 @@ local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags
 local VitalsRender = require(script.VitalsRender)
 local SectorAnimation = require(script.SectorAnimation)
 local LeaderboardHandler = require(script.Leaderboard)
+local Formatting = require(ReplicatedStorage.SharedUtilities.Libraries.Formatting)
+local Constants = require(ReplicatedStorage.SharedData.GlobalConstants.Constants)
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player.PlayerGui
@@ -99,6 +101,30 @@ function HudController.InitConnections()
     Player.CharacterAdded:Connect(characterAdded)
     Player:GetAttributeChangedSignal("Armor"):Connect(function()
         VitalsRender.updateVitalsBar("Armor", Player:GetAttribute("Armor"))
+    end)
+
+    task.spawn(function()
+        local gameTimeRemote = ReplicatedStorage.Network.Functions.GetGameTime
+        local gameTime = math.floor(gameTimeRemote:InvokeServer())
+
+        local statusUi = HudController.HUD.Master.Debug
+        local version = Constants.Version
+        local region = ReplicatedStorage.Network.Functions.GetRegion:InvokeServer()
+        local counter = 0
+    
+        while true do
+            local timeString = Formatting.GetTimeString(gameTime, true)
+            statusUi.Text = version .. " Server - " .. region .. " Uptime: " .. timeString
+
+            gameTime += 1; counter += 1
+
+            if counter >= 5 then
+                counter = 0
+                gameTime = math.floor(gameTimeRemote:InvokeServer())
+            else
+                task.wait(1)
+            end
+        end
     end)
 end
 
