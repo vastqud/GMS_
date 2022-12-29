@@ -29,6 +29,14 @@ local function returnGameTime(player)
     return workspace.DistributedGameTime
 end
 
+local function relay_hit_point(player, point)
+    for _, thisPlayer in ipairs(Players:GetPlayers()) do
+        if thisPlayer ~= player then
+            ReplicatedStorage.Network.Events.ReplicateJoints:FireClient(thisPlayer, player, point)
+        end
+    end
+end
+
 local function returnRegion(player)
     local url = "http://ip-api.com/json/"
     
@@ -57,5 +65,6 @@ do
     end
 end
 
+ReplicatedStorage.Network.Events.ReplicateJoints.OnServerEvent:Connect(relay_hit_point)
 ReplicatedStorage.Network.Functions.GetGameTime.OnServerInvoke = returnGameTime
 ReplicatedStorage.Network.Functions.GetRegion.OnServerInvoke = returnRegion

@@ -1,55 +1,81 @@
 --wait(2)
 
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
-local Player = game.Players.LocalPlayer
-local PlayerMouse = Player:GetMouse()
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
 
 local Camera = workspace.CurrentCamera
+local VerifyCharacterExists = require(ReplicatedStorage.SharedUtilities.Utilities.Character.VerifyCharacterExists)
 
 local Character = Player.Character or Player.CharacterAdded:Wait()
 local Head = Character:WaitForChild("Head")
-local Neck = Head:WaitForChild("Neck")
-
 local Torso = Character:WaitForChild("UpperTorso")
-local Waist = Torso:WaitForChild("Waist")
-
-local Humanoid = Character:WaitForChild("Humanoid")
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+local Neck = Head:FindFirstChild("Neck")
+local Waist = Torso:FindFirstChild("Waist")
 
 local NeckOriginC0 = Neck.C0
 local WaistOriginC0 = Waist.C0
+local Remote = ReplicatedStorage.Network.Events.ReplicateJoints
+local HitPoints = {}
 
 Neck.MaxVelocity = 1/3
 
-local humSit = false
-local function resetToDefaults()
-	if not humSit then
-		Neck.C0 = NeckOriginC0
-		Waist.C0 = WaistOriginC0
-		humSit = true
-	end
+local function resetToDefaults(char)
+	Neck.C0 = NeckOriginC0
+	Waist.C0 = WaistOriginC0
 end
 
-RunService.RenderStepped:Connect(function() 
-	if Humanoid.Sit then resetToDefaults() return end
-	humSit = false
-	local CameraCFrame = Camera.CoordinateFrame
+local function updateJoints(Character, player)
+	local Head = Character:FindFirstChild("Head")
+	local Neck = Head:FindFirstChild("Neck")
+	
+	local Torso = Character:FindFirstChild("UpperTorso")
+	local Waist = Torso:FindFirstChild("Waist")
+	
+	local Humanoid = Character:FindFirstChild("Humanoid")
+	local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+
+	if Humanoid.Sit then resetToDefaults(Character) return end
 	
 	if Character:FindFirstChild("UpperTorso") and Character:FindFirstChild("Head") then
 		local TorsoLookVector = Torso.CFrame.lookVector
 		local HeadPosition = Head.CFrame.p
 		
 		if Neck and Waist then
-			if Camera.CameraSubject:IsDescendantOf(Character) or Camera.CameraSubject:IsDescendantOf(Player) then
-				local Point = PlayerMouse.Hit.p
-				
-				local Distance = (Head.CFrame.p - Point).magnitude
-				local Difference = Head.CFrame.Y - Point.Y
-
-				Neck.C0 = Neck.C0:lerp(NeckOriginC0 * CFrame.Angles(-(math.atan(Difference / Distance) * 0.2), (((HeadPosition - Point).Unit):Cross(TorsoLookVector)).Y * 0.4, 0), 0.5 / 2)
-				Waist.C0 = Waist.C0:lerp(WaistOriginC0 * CFrame.Angles(-(math.atan(Difference / Distance) * 0.3), (((HeadPosition - Point).Unit):Cross(TorsoLookVector)).Y * 0.8, 0), 0.5 / 2)
+			local Point
+			if player == Player then
+				Point = Mouse.Hit.p
+				Remote:FireServer(Point)
+			else
+				Point = HitPoints[player.UserId]
 			end
+			if not Point then return end
+				
+			local Distance = (Head.CFrame.p - Point).magnitude
+			local Difference = Head.CFrame.Y - Point.Y
+
+			Neck.C0 = Neck.C0:lerp(NeckOriginC0 * CFrame.Angles(-(math.atan(Difference / Distance) * 0.2), (((HeadPosition - Point).Unit):Cross(TorsoLookVector)).Y * 0.4, 0), 0.5 / 2)
+			Waist.C0 = Waist.C0:lerp(WaistOriginC0 * CFrame.Angles(-(math.atan(Difference / Distance) * 0.3), (((HeadPosition - Point).Unit):Cross(TorsoLookVector)).Y * 0.8, 0), 0.5 / 2)
 		end
 	end	
+end
+
+RunService.RenderStepped:Connect(function() 
+	for _, player in ipairs(Players:GetPlayers()) do
+		local char = VerifyCharacterExists(player)
+		if char then
+			updateJoints(char.Parent, player)
+		end
+	end
+end)
+
+Remote.OnClientEvent:Connect(function(player, point)
+	HitPoints[player.UserId] = point
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+	HitPoints[player.UserId] = nil
 end)
