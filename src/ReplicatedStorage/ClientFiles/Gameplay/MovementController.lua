@@ -59,7 +59,7 @@ local function updateWalkspeed(dt)
         WALKSPEED_TARGET = 0
     end
 
-    hum.WalkSpeed = MathExtended.lerp(hum.WalkSpeed, WALKSPEED_TARGET, dt*4.5)
+    hum.WalkSpeed = MathExtended.lerp(hum.WalkSpeed, WALKSPEED_TARGET, dt*4)
 end
 
 local function update_stamina(dt)
