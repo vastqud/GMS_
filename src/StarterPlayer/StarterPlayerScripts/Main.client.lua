@@ -37,8 +37,8 @@ local function loadBlocking()
     local plotLoaded = false
     local loadingScreen = PlayerGui:WaitForChild("loading")
 
-    local function loadPlot(...)
-        local model = YieldModelLoad(...)
+    local function loadPlot(model, desc)
+        local model = YieldModelLoad(model, desc, 10)
         if model then
             ReplicatedStorage.Network.Events.LoadPlotClient:FireServer()
             plotLoaded = true
