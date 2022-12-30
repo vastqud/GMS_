@@ -5,7 +5,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Player = Players.LocalPlayer
-local Mouse = Player:GetMouse()
 
 local Camera = workspace.CurrentCamera
 local VerifyCharacterExists = require(ReplicatedStorage.SharedUtilities.Utilities.Character.VerifyCharacterExists)
@@ -19,6 +18,7 @@ local Waist = Torso:FindFirstChild("Waist")
 local NeckOriginC0 = Neck.C0
 local WaistOriginC0 = Waist.C0
 local Remote = ReplicatedStorage.Network.Events.ReplicateJoints
+local Camera = workspace.CurrentCamera
 local HitPoints = {}
 
 Neck.MaxVelocity = 1/3
@@ -47,7 +47,7 @@ local function updateJoints(Character, player)
 		if Neck and Waist then
 			local Point
 			if player == Player then
-				Point = Mouse.Hit.p
+				Point = HumanoidRootPart.CFrame.Position + Camera.CFrame.LookVector*10
 				Remote:FireServer(Point)
 			else
 				Point = HitPoints[player.UserId]
