@@ -44,8 +44,6 @@ function Plots.remove(owner)
 
     if plot then
         plot:Cleanup()
-
-        Plots.list[owner.UserId] = nil
     end
 end
 
@@ -99,6 +97,22 @@ end
 
 function Plots.prototype:Cleanup()
     self.Model:SetAttribute("Owner", nil)
+
+    for _, obj in ipairs(self.Model:GetChildren()) do
+        if obj.Name ~= "Base" then
+            obj:Destroy()
+        end
+    end
+
+    self:Destroy()
+end
+
+function Plots.prototype:Destroy()
+    self.LoadedBindable:Destroy()
+    self.OnLoaded = nil
+    self = nil
+
+    Plots.list[owner.UserId] = nil
 end
 
 ReplicatedStorage.Network.Events.LoadPlotClient.OnServerEvent:Connect(verifyClientLoaded)
