@@ -65,8 +65,8 @@ end
 function Plots.prototype:Load()
     task.spawn(function()
         local rand = Random.new()
-        for i = 1, 5 do
-            local offset = Vector3.new(rand:NextInteger(-50, 50), 0, rand:NextInteger(-50, 50))
+        for i = 1, 10 do
+            local offset = Vector3.new(rand:NextInteger(-100, 100), 0, rand:NextInteger(-100, 100))
             local loaded_model = ReplicatedStorage.testmodel:Clone()
             loaded_model:SetPrimaryPartCFrame(CFrame.new(self.Model.PrimaryPart.Position + offset))
             loaded_model.Parent = self.Model
