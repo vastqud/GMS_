@@ -41,6 +41,7 @@ local function returnRegion(player)
     local url = "http://ip-api.com/json/"
     
     local getasyncinfo = HttpService:GetAsync(url) 
+    if not getasyncinfo then return "N/A" end
     local decodedinfo = HttpService:JSONDecode(getasyncinfo) 
 
     if not decodedinfo then return "N/A" end
