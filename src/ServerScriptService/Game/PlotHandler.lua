@@ -108,11 +108,11 @@ function Plots.prototype:Cleanup()
 end
 
 function Plots.prototype:Destroy()
+    Plots.list[self.Owner.UserId] = nil
+
     self.LoadedBindable:Destroy()
     self.OnLoaded = nil
     self = nil
-
-    Plots.list[owner.UserId] = nil
 end
 
 ReplicatedStorage.Network.Events.LoadPlotClient.OnServerEvent:Connect(verifyClientLoaded)
