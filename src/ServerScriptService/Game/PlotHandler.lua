@@ -1,17 +1,23 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local PLOT_MODELS = workspace:FindFirstChild("Plots")
+local PLOT_MODELS = workspace:FindFirstChild("Plots"):GetChildren()
 local RAY_PARAMS = RaycastParams.new()
 local DOWN = Vector3.new(0, -1, 0)
 local TELEPORT_OFFSET = Vector3.new(0, 15, 0)
+
+do
+    table.sort(PLOT_MODELS, function(a, b)
+        return a:GetAttribute("Order") < b:GetAttribute("Order")
+    end)
+end
 
 local Plots = {}
 Plots.prototype = {}
 Plots.list = {}
 
 local function findVacantPlot()
-    for _, model in ipairs(PLOT_MODELS:GetChildren()) do
+    for _, model in ipairs(PLOT_MODELS) do
         if not model:GetAttribute("Owner") then
             return model
         end
