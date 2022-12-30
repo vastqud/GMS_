@@ -25,6 +25,7 @@ local function init()
     SectorTrack.init() --yields quite a bit
     HUDController.ToggleHud(true)
     MovementController.EnableSprint(true)
+    MovementController.EnableMouseZoom(true)
 end
 
 local function removeLoadingScreen()

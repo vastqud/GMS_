@@ -18,6 +18,7 @@ local sprinting = false
 local cam = workspace.CurrentCamera
 
 local WALKSPEED_TARGET = 0
+local FOV_TARGET = 70
 
 local MovementController = {}
 MovementController.SprintBound = false
@@ -26,6 +27,7 @@ MovementController.StaminaDrain = Constants.StaminaDrain --units/s
 MovementController.StaminaGain = Constants.StaminaGain
 MovementController.StaminaGainDelay = Constants.StaminaGainDelay --s
 MovementController.Stamina = MovementController.MaximumStamina
+MovementController.Zoomed = false
 
 local stopped_sprint_time = tick()
 
@@ -40,13 +42,11 @@ local function handleSprint(on)
         if MovementController.Stamina <= 0 then return end
 
 		sprinting = true
-		TweenService:Create(cam, TweenInfo.new(0.35), {FieldOfView = 75}):Play()
 	else
 		if not sprinting then return end
 
 		sprinting = false
         stopped_sprint_time = tick()
-		TweenService:Create(cam, TweenInfo.new(0.35), {FieldOfView = 70}):Play()
 	end
 end
 
@@ -62,10 +62,16 @@ local function updateWalkspeed(dt)
     hum.WalkSpeed = MathExtended.lerp(hum.WalkSpeed, WALKSPEED_TARGET, dt*4)
 end
 
-local function update_stamina(dt)
+local function calculateFov()
+    local base = sprinting and 70 or 75
+    FOV_TARGET = MovementController.Zoomed and base-20 or base
+end
+
+local function update(dt)
     if not hum then return end
 
     updateWalkspeed(dt)
+    calculateFov()
     local updated_raw = MovementController.Stamina --no change by default
 
     if sprinting then
@@ -80,6 +86,7 @@ local function update_stamina(dt)
 
     MovementController.Stamina = math.clamp(updated_raw, 0, MovementController.MaximumStamina)
     HUDController.UpdateVitalsBar("Stamina", MovementController.Stamina, MovementController.MaximumStamina)
+    cam.FieldOfView = MathExtended.lerp(cam.FieldOfView, FOV_TARGET, dt*9)
 end
 
 local function processSprint(_, state, _)
@@ -87,6 +94,14 @@ local function processSprint(_, state, _)
         handleSprint(true)
     elseif state == Enum.UserInputState.End then
         handleSprint(false)
+    end
+end
+
+local function processMouseZoom(_, state, _)
+    if state == Enum.UserInputState.Begin then
+        MovementController.Zoomed = true
+    elseif state == Enum.UserInputState.End then
+        MovementController.Zoomed = false
     end
 end
 
@@ -104,11 +119,19 @@ function MovementController.EnableSprint(on)
     end
 end
 
+function MovementController.EnableMouseZoom(on)
+    if on then
+        ContextActionService:BindAction("MouseZoom", processMouseZoom, false, Enum.UserInputType.MouseButton3)
+    else
+        ContextActionService:UnbindAction("MouseZoom")
+    end
+end
+
 Player.CharacterAdded:Connect(function(chara)
     char = chara
     hum = char:WaitForChild("Humanoid")
     hum.WalkSpeed = 0
 end)
-RunService.Heartbeat:Connect(update_stamina)
+RunService.Heartbeat:Connect(update)
 
 return MovementController
