@@ -64,7 +64,7 @@ end
 
 local function calculateFov()
     local base = sprinting and 75 or 70
-    FOV_TARGET = MovementController.Zoomed and base-25 or base
+    FOV_TARGET = MovementController.Zoomed and base-33.5 or base
 end
 
 local function update(dt)
