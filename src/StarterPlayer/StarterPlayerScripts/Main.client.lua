@@ -20,12 +20,20 @@ local SectorTrack = require(CharUtils.SectorTrack)
 local HUDController = require(UiFiles.HUD)
 local MovementController = require(ClientFiles.Gameplay.MovementController)
 local YieldModelLoad = require(ClientFiles.Gameplay.YieldModelLoad)
+local RequestNeverStreamOut = require(SharedUtils.Utilities.Misc.RequestNeverStreamOut)
 
 local function init()
     SectorTrack.init() --yields quite a bit
     HUDController.ToggleHud(true)
     MovementController.EnableSprint(true)
     MovementController.EnableMouseZoom(true)
+
+    local stars = RequestNeverStreamOut.RequestFromClient(workspace:WaitForChild("Stars")):Clone()
+    if stars then
+        workspace:FindFirstChild("Stars"):Destroy()
+        stars.Parent = workspace
+        RequestNeverStreamOut.FinishedClient(stars.Name)
+    end
 end
 
 local function removeLoadingScreen()
