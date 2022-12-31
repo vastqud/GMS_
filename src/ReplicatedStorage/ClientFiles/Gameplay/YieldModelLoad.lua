@@ -17,6 +17,7 @@ local function YieldUntilLoaded(model, expectedDescendants, timeOut)
     until (#model:GetDescendants() >= expectedDescendants) or (cancel) or (timedOut)
 
     if cancel then print("Model " .. model.Name .. " loading canceled") return end
+    if timedOut then print("Model " .. model.Name .. " loading timed out") return end
     return model
 end
 

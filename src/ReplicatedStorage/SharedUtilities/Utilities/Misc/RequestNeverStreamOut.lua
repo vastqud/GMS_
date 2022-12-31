@@ -25,6 +25,7 @@ function NeverStreamOut.RequestFromClient(model)
     if not model then return end
 
     if STREAM_BUFFER:FindFirstChild(model.Name) then
+        model = STREAM_BUFFER:FindFirstChild(model.Name)
         local desc = GET_DESCENDANTS:InvokeServer(model)
 
         if desc then
@@ -35,7 +36,7 @@ function NeverStreamOut.RequestFromClient(model)
     local status, modelName, descendants = REQUEST_REMOTE:InvokeServer(model)
 
     if status then
-        local model = STREAM_BUFFER:WaitForChild(modelName, 3)
+        local model = STREAM_BUFFER:WaitForChild(modelName, 10)
 
         if model then
             return YieldModelLoad(model, descendants)
