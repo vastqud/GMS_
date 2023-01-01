@@ -25,6 +25,7 @@ local AtmosphereController = require(ClientFiles.Environment.Atmosphere)
 local function init()
     SectorTrack.init() --yields quite a bit
     AtmosphereController.init() --also yields
+    require(ClientFiles.Environment.Battles).init()
     HUDController.ToggleHud(true)
     MovementController.EnableSprint(true)
     MovementController.EnableMouseZoom(true)

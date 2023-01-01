@@ -29,7 +29,9 @@ function NeverStreamOut.RequestFromClient(model)
         local desc = GET_DESCENDANTS:InvokeServer(model)
 
         if desc then
-            return YieldModelLoad(model, desc)
+            local returned = YieldModelLoad(model, desc):Clone()
+            model:Destroy()
+            return returned
         end
     end
 
@@ -39,7 +41,9 @@ function NeverStreamOut.RequestFromClient(model)
         local model = STREAM_BUFFER:WaitForChild(modelName, 10)
 
         if model then
-            return YieldModelLoad(model, descendants)
+            local returned = YieldModelLoad(model, descendants):Clone()
+            model:Destroy()
+            return returned
         end
     end
 end

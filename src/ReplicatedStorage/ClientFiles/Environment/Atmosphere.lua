@@ -36,7 +36,7 @@ local function update(dt)
 end
 
 function AtmosphereController.init()
-    local stars = RequestNeverStreamOut.RequestFromClient(workspace:WaitForChild("Stars")):Clone()
+    local stars = RequestNeverStreamOut.RequestFromClient(workspace:WaitForChild("Stars"))
 
     if stars then
         workspace:FindFirstChild("Stars"):Destroy()

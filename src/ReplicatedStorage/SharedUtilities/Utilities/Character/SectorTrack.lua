@@ -74,7 +74,7 @@ function SectorTrack.init()
     end)
 
     if not IS_SERVER then 
-        local clone = RequestNeverStreamOut.RequestFromClient(workspace:FindFirstChild("SectorBounds")):Clone()
+        local clone = RequestNeverStreamOut.RequestFromClient(workspace:FindFirstChild("SectorBounds"))
 
         if clone then
             local name = clone.Name
