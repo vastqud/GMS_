@@ -40,6 +40,7 @@ local function handleSprint(on)
 		if hum.SeatPart then return end
 		if sprinting then return end
         if MovementController.Stamina <= 0 then return end
+        if ControlModule:GetMoveVector().Magnitude < 0.3 then return end
 
 		sprinting = true
 	else
@@ -75,6 +76,7 @@ local function update(dt)
     local updated_raw = MovementController.Stamina --no change by default
 
     if sprinting then
+        if ControlModule:GetMoveVector().Magnitude < 0.3 then handleSprint(false) end
         updated_raw = MovementController.Stamina - (MovementController.StaminaDrain * dt)
 
         if updated_raw <= 0 then handleSprint(false) end
