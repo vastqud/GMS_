@@ -65,7 +65,7 @@ function SectorTrack.init()
     local elapsed = 100
     local pollRate = IS_SERVER and SectorTrack.ServerPollRate or SectorTrack.ClientPollRate
 
-    RunService.Stepped:Connect(function(dt)
+    RunService.Heartbeat:Connect(function(dt)
         elapsed += dt
         if (elapsed < pollRate) then return end
         elapsed = 0
