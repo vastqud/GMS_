@@ -14,10 +14,14 @@ function ObjectController.update(dt)
     for _, part in ipairs(CollectionService:GetTagged("DroneSign")) do
         local model = part.Parent
         local center = model:GetAttribute("Center")
-        local newOffset = math.sin(2*math.pi*0.8*tick())
-        local currentCf = part.CFrame
+        local newOffset = 0.2*math.sin(2*math.pi*0.4*tick())
 
-        model:SetPrimaryPartCFrame(currentCf * CFrame.new(0, newOffset, 0))
+        local currentCf = part.CFrame
+        local currentPos = currentCf.Position
+        local rot = currentCf - currentPos
+        local new = CFrame.new(currentPos.X, center + newOffset, currentPos.Z) * rot
+
+        model:SetPrimaryPartCFrame(new)
     end
 end
 

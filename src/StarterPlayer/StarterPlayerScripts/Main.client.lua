@@ -21,6 +21,7 @@ local HUDController = require(UiFiles.HUD)
 local MovementController = require(ClientFiles.Gameplay.MovementController)
 local YieldModelLoad = require(ClientFiles.Gameplay.YieldModelLoad)
 local AtmosphereController = require(ClientFiles.Environment.Atmosphere)
+local MiscObjects = require(ClientFiles.Environment.MiscObjects)
 
 local function init()
     SectorTrack.init() --yields quite a bit
