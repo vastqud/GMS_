@@ -14,7 +14,7 @@ local Rand = Random.new(tick())
 SectorTrack.init()
 
 local function PlayerAdded(player)
-    player:SetAttribute("Armor", 75)
+    player:SetAttribute("Armor", 50)
 
     local plot = Plots.new(player)
     plot:Load()
