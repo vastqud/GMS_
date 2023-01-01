@@ -6,6 +6,8 @@ local RAY_PARAMS = RaycastParams.new()
 local DOWN = Vector3.new(0, -1, 0)
 local TELEPORT_OFFSET = Vector3.new(0, 15, 0)
 
+local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags)
+
 do
     table.sort(PLOT_MODELS, function(a, b)
         return a:GetAttribute("Order") < b:GetAttribute("Order")
@@ -82,6 +84,7 @@ function Plots.prototype:Load()
 end
 
 function Plots.prototype:TeleportOwnerBlocking()
+    if FastFlags.Spawn_At_SpawnPoint then return end
     local char = self.Owner.Character
     if not char then
         char = self.Owner.CharacterAdded:Wait()
