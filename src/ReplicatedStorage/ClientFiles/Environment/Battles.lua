@@ -36,6 +36,7 @@ local function update(dt)
             emitter:Emit(50)
         end
     end
+
     if emitting_moving then
         for _, plane in pairs(PLANES) do
             for _, emitter in ipairs(plane.Emitters) do
@@ -109,6 +110,14 @@ function Battles.init()
         Battles.initted = true
         RunService.Stepped:Connect(update)
         ReplicatedStorage.Network.Events.PlaneSpawn.OnClientEvent:Connect(start_plane)
+
+        task.spawn(function()
+            while true do
+                wait(10)
+                print("starting plane")
+                start_plane()
+            end
+        end)
     end
 end
 
