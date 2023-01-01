@@ -8,6 +8,9 @@ local CharUtils = SharedUtils.Utilities.Character
 local SectorTrack = require(CharUtils.SectorTrack)
 local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags)
 local Plots = require(ServerScriptService.Game.PlotHandler)
+
+local Rand = Random.new(tick())
+
 SectorTrack.init()
 
 local function PlayerAdded(player)
@@ -64,6 +67,13 @@ do
             player.Character.Humanoid:TakeDamage(9*dir)
         end)
     end
+
+    task.spawn(function()
+        while true do
+            task.wait(Rand:NextInteger(45, 125))
+            ReplicatedStorage.Network.Events.PlaneSpawn:FireAllClients(tick())
+        end
+    end)
 end
 
 ReplicatedStorage.Network.Events.ReplicateJoints.OnServerEvent:Connect(relay_hit_point)

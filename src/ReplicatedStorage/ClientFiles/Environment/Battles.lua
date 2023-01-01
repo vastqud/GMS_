@@ -8,7 +8,7 @@ local PARTICLE_EMIT_RATE_STATIC = 5
 local PARTICLE_EMIT_RATE_MOVING = 50
 local PLANE_HEIGHT = 950
 local PLANE_SPAWN_RADIUS = 6750
-local RAND = Random.new(tick())
+local RAND = nil
 local PLANE = ReplicatedStorage:WaitForChild("spaceship")
 
 local Battles = {}
@@ -79,7 +79,7 @@ local function createPlane()
     local offset = RAND:NextNumber(-10, 10)
     local cf = CFrame.lookAt(start, Vector3.new(0, PLANE_HEIGHT, 0)) * CFrame.Angles(0, math.rad(-90+offset), 0)
 
-    PLANES[new_plane] = {Plane = new_plane, Emitters = {}, EndBind = end_bind, Speed = RAND:NextInteger(1250, 1750)}
+    PLANES[new_plane] = {Plane = new_plane, Emitters = {}, EndBind = end_bind, Speed = RAND:NextInteger(950, 1300)}
     new_plane.Parent = workspace
     new_plane:SetPrimaryPartCFrame(cf)
     new_plane.PrimaryPart.Sound:Play()
@@ -110,6 +110,16 @@ local function start_plane()
     new_plane:Destroy()
 end
 
+local function initate_planes(seed)
+    RAND = Random.new(seed)
+
+    local amt = RAND:NextInteger(1, 3)
+    for i = 1, amt do
+        task.spawn(start_plane)
+        task.wait(RAND:NextNumber(1, 4))
+    end
+end
+
 function Battles.init()
     local station = RequestNeverStreamOut.RequestFromClient(workspace:WaitForChild("spacestation"))
     local spawn_points = RequestNeverStreamOut.RequestFromClient(workspace:WaitForChild("plane_spawns"))
@@ -134,18 +144,7 @@ function Battles.init()
         
         Battles.initted = true
         RunService.RenderStepped:Connect(update)
-        ReplicatedStorage.Network.Events.PlaneSpawn.OnClientEvent:Connect(start_plane)
-
-        task.spawn(function()
-            while true do
-                task.wait(RAND:NextNumber(75, 125))
-                local amt = RAND:NextInteger(1, 3)
-                for i = 1, amt do
-                    task.spawn(start_plane)
-                    task.wait(RAND:NextNumber(1, 4))
-                end
-            end
-        end)
+        ReplicatedStorage.Network.Events.PlaneSpawn.OnClientEvent:Connect(initate_planes)
     end
 end
 
