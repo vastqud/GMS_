@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local RequestNeverStreamOut = require(ReplicatedStorage.SharedUtilities.Utilities.Misc.RequestNeverStreamOut)
+local Planes = require(script.Plane)
 
 local PARTICLE_EMIT_RATE_STATIC = 5
 local PARTICLE_EMIT_RATE_MOVING = 50
@@ -52,52 +53,28 @@ local function update(dt)
     local newCf = Battles.Station.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(dt*30), 0)
     Battles.Station:SetPrimaryPartCFrame(newCf)
 
-    for _, plane_data in pairs(PLANES) do
-        local plane = plane_data.Plane
-        local currentCf = plane.PrimaryPart.CFrame
-        local rot = currentCf - currentCf.Position
-        local newPos = currentCf.Position - (currentCf.RightVector * plane_data.Speed * dt)
-        local rot_offset = CFrame.Angles(math.rad(0.2*math.sin(2*math.pi*0.8*tick())), 0, 0)
-
-        plane:SetPrimaryPartCFrame(CFrame.new(newPos) * rot * rot_offset)
+    for _, plane in pairs(PLANES) do
+        plane:update(dt)
     end
-end
-
-local function getRandomPlaneStart()
-    local theta = RAND:NextInteger(0, 360)
-    local x = PLANE_SPAWN_RADIUS * math.cos(theta)
-    local y = PLANE_SPAWN_RADIUS * math.sin(theta)
-
-    return Vector3.new(x, PLANE_HEIGHT, y)
 end
 
 local function createPlane()
-    local new_plane = PLANE:Clone()
-    local end_bind = Instance.new("BindableEvent")
+    local new_plane = Planes.new(RAND)
+    local index = #PLANES+1
 
-    local start = getRandomPlaneStart()
-    local offset = RAND:NextNumber(-10, 10)
-    local cf = CFrame.lookAt(start, Vector3.new(0, PLANE_HEIGHT, 0)) * CFrame.Angles(0, math.rad(-90+offset), 0)
+    PLANES[index] = new_plane
+    new_plane:SetStart()
 
-    PLANES[new_plane] = {Plane = new_plane, Emitters = {}, EndBind = end_bind, Speed = RAND:NextInteger(950, 1300)}
-    new_plane.Parent = workspace
-    new_plane:SetPrimaryPartCFrame(cf)
-    new_plane.PrimaryPart.Sound:Play()
-
-    for _, obj in ipairs(new_plane:GetDescendants()) do
-        if obj:IsA("ParticleEmitter") then
-            table.insert(PLANES[new_plane].Emitters, obj)
-        end
-    end
-
-    return new_plane, end_bind
+    return new_plane, index
 end
 
 local function start_plane()
     if not Battles.initted then return end
 
-    local new_plane, end_bind = createPlane()
-    local sound = new_plane.PrimaryPart.Sound
+    local new_plane, index = createPlane()
+    local end_bind = new_plane.EndBind
+    local sound = new_plane.Model.PrimaryPart.Sound
+
     task.spawn(function()
         task.wait(13)
         end_bind:Fire()
@@ -106,8 +83,7 @@ local function start_plane()
     TweenService:Create(sound, TweenInfo.new(1), {Volume = 0}):Play()
     task.wait(1)
 
-    PLANES[new_plane].Plane = nil; PLANES[new_plane].Emitters = nil; PLANES[new_plane] = nil
-    new_plane:Destroy()
+    PLANES[index] = nil; new_plane:Destroy(); 
 end
 
 local function initate_planes(seed)
