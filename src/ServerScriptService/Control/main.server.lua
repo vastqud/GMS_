@@ -70,7 +70,7 @@ do
 
     task.spawn(function()
         while true do
-            task.wait(Rand:NextInteger(45, 125))
+            task.wait(Rand:NextInteger(25, 30))
             ReplicatedStorage.Network.Events.PlaneSpawn:FireAllClients(tick())
         end
     end)
