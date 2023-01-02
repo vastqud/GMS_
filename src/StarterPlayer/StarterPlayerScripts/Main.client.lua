@@ -26,7 +26,7 @@ local MiscObjects = require(ClientFiles.Environment.MiscObjects)
 local function init()
     SectorTrack.init() --yields quite a bit
     AtmosphereController.init() --also yields
-    require(ClientFiles.Environment.Battles).init()
+    require(ClientFiles.Environment.Battles).init() --yields
     HUDController.ToggleHud(true)
     MovementController.EnableSprint(true)
     MovementController.EnableMouseZoom(true)
