@@ -29,10 +29,12 @@ end
 local function verifyClientLoaded(player)
     local plot = Plots.find(player)
     if not plot then return end
-    if plot.Loaded then return end
+    if plot.Loaded then return true end
 
     plot.Loaded = true
     plot.LoadedBindable:Fire()
+
+    return true
 end
 
 function Plots.find(owner)
@@ -118,6 +120,6 @@ function Plots.prototype:Destroy()
     self = nil
 end
 
-ReplicatedStorage.Network.Events.LoadPlotClient.OnServerEvent:Connect(verifyClientLoaded)
+ReplicatedStorage.Network.Functions.VerifyClientLoad.OnServerInvoke = verifyClientLoaded
 
 return Plots

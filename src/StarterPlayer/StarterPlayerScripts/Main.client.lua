@@ -45,7 +45,7 @@ local function loadBlocking()
     local function loadPlot(model, desc)
         local model = YieldModelLoad(model, desc, 10)
         if model then
-            ReplicatedStorage.Network.Events.LoadPlotClient:FireServer()
+            ReplicatedStorage.Network.Functions.VerifyClientLoad:InvokeServer()
             plotLoaded = true
         end
     end
