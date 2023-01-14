@@ -8,6 +8,7 @@ local CharUtils = SharedUtils.Utilities.Character
 local SectorTrack = require(CharUtils.SectorTrack)
 local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags)
 local Plots = require(ServerScriptService.Game.PlotHandler)
+local Customize = require(ServerScriptService.Character.CustomizeServer)
 
 local Rand = Random.new(tick())
 
