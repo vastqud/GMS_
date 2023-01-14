@@ -5,6 +5,14 @@ local pose = "Standing"
 local userNoUpdateOnLoopSuccess, userNoUpdateOnLoopValue = pcall(function() return UserSettings():IsUserFeatureEnabled("UserNoUpdateOnLoop") end)
 local userNoUpdateOnLoop = userNoUpdateOnLoopSuccess and userNoUpdateOnLoopValue
 
+local stuff = script.Parent.animatestuff
+do
+    for _, obj in ipairs(stuff:GetChildren()) do
+        obj.Parent = script
+    end
+    stuff:Destroy()
+end
+
 local userEmoteToRunThresholdChange do
 	local success, value = pcall(function()
 		return UserSettings():IsUserFeatureEnabled("UserEmoteToRunThresholdChange")
