@@ -13,8 +13,9 @@ end
 
 local function registerDoor(part)
     local parent = part.Parent.Parent
-    local hitbox = parent.Hitbox.Part
+    if Objects.Doors[parent] then return end
 
+    local hitbox = parent.Hitbox.Part
     Objects.Doors[parent] = {Inside = {}}
 
     hitbox.Touched:Connect(function(part)
