@@ -43,6 +43,8 @@ function Doors.TweenDoor(pp)
     local newcf = CFrame.new(pos) * rot
 
     TweenService:Create(pp, TweenInfo.new(1), {CFrame = newcf}):Play()
+    middle.Sound:Play()
+
     setDoorLight(model, true)
     task.delay(1, setDoorLight, model, false)
 end
