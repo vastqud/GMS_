@@ -10,12 +10,35 @@ local HUDController = require(UIFiles.HUD)
 local Constants = require(GlobalConstants.Constants)
 local MathExtended = require(ReplicatedStorage.SharedUtilities.Libraries.Math)
 local ControlModule = require(Players.LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+local FastFlags = require(ReplicatedStorage.SharedData.GlobalConstants.FastFlags)
+local OTS = require(ReplicatedStorage.ClientFiles.Gameplay.OTSCamera)
 
 local Player = Players.LocalPlayer
 local char = Player.Character or Player.CharacterAdded:Wait()
 local hum = char:WaitForChild("Humanoid"); hum.WalkSpeed = 0
 local sprinting = false
 local cam = workspace.CurrentCamera
+
+do
+    local animateScript = char:WaitForChild("Animate")
+    local walk = animateScript:WaitForChild("walk")
+    local run = animateScript:WaitForChild("run")
+
+    walk.WalkAnim:Destroy()
+    run.RunAnim:Destroy()
+
+    local newAnimWalk = Instance.new("Animation")
+    local newAnimRun = Instance.new("Animation")
+
+    newAnimWalk.AnimationId = "http://www.roblox.com/asset/?id=913402848"
+    newAnimRun.AnimationId = "http://www.roblox.com/asset/?id=913376220"
+    newAnimRun:SetAttribute("LinearVelocity", Vector2.new(0, 12.8))
+    newAnimWalk:SetAttribute("LinearVelocity", Vector2.new(0, 6.4))
+
+    newAnimWalk.Parent = walk; newAnimRun.Parent = run
+
+    OTS:Enable()
+end
 
 local WALKSPEED_TARGET = 0
 local FOV_TARGET = 70
@@ -52,6 +75,11 @@ local function handleSprint(on)
 end
 
 local function updateWalkspeed(dt)
+    if not FastFlags.WalkSpeed_Lerp then
+        hum.WalkSpeed = 13 
+        return
+    end
+
     local moveVector = ControlModule:GetMoveVector()
 
     if moveVector.Magnitude >= 0.3 then
@@ -123,10 +151,23 @@ end
 
 function MovementController.EnableMouseZoom(on)
     if on then
-        ContextActionService:BindAction("MouseZoom", processMouseZoom, false, Enum.UserInputType.MouseButton3)
+        ContextActionService:BindAction("MouseZoom", processMouseZoom, false, Enum.UserInputType.MouseButton2)
     else
         ContextActionService:UnbindAction("MouseZoom")
     end
+end
+
+
+local function enableWeapon(_, state)
+    if state ~= Enum.UserInputState.Begin then return end
+    OTS:SetWeaponMode(not OTS.WeaponMode)
+end
+
+local shoulder = 1
+local function setShoulder(_, state)
+    if state ~= Enum.UserInputState.Begin then return end
+    shoulder = shoulder == 1 and -1 or 1
+    OTS:SetShoulder(shoulder)
 end
 
 Player.CharacterAdded:Connect(function(chara)
@@ -135,5 +176,7 @@ Player.CharacterAdded:Connect(function(chara)
     hum.WalkSpeed = 0
 end)
 RunService.Heartbeat:Connect(update)
+ContextActionService:BindAction("EnableWeapon", enableWeapon, false, Enum.KeyCode.G)
+ContextActionService:BindAction("shoulder", setShoulder, false, Enum.KeyCode.F)
 
 return MovementController
