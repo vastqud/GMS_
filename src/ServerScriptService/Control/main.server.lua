@@ -16,7 +16,7 @@ local Rand = Random.new(tick())
 SectorTrack.init()
 
 local function guntest(char)
-    task.wait(10)
+    task.wait(9)
     local gun = ReplicatedStorage.rifle:Clone()
     gun.Parent = char
 

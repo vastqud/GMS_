@@ -6,6 +6,12 @@ local Player = Players.LocalPlayer
 local Cam = workspace.CurrentCamera
 local ViewportSize = Cam.ViewportSize
 
+local WaistC0
+local LShoulderC0
+local RShoulderC0
+
+game.Workspace.Retargeting = Enum.AnimatorRetargetingMode.Disabled
+
 local OTS = {}
 OTS.Enabled = false
 OTS.WeaponMode = false
@@ -18,7 +24,7 @@ OTS.Settings = {
         ShoulderOffset = Vector3.new(2.5, 2.5, 10)
     },
     WeaponMode = {
-        ShoulderOffset = Vector3.new(2.5, 1.85, 7)
+        ShoulderOffset = Vector3.new(2.2, 1.95, 5.5)
     },
     Aimed = {
         ShoulderOffset = Vector3.new(1.75, 2.5, 5)
@@ -78,9 +84,15 @@ function OTS:Update(dt)
         end
 	end
 
-    local newRootCf = CFrame.new(root.Position) * CFrame.Angles(0, self.YAngle, 0)
+    local rot = root.CFrame - root.CFrame.Position
+    local newRootCf = CFrame.new(root.Position) * (rot:Lerp(CFrame.Angles(0, self.YAngle, 0), 0.3))
     if OTS.WeaponMode then
         root.CFrame = newRootCf--root.CFrame:Lerp(newRootCf, 0.4)
+
+        local waist = char.UpperTorso.Waist
+        local angle = CFrame.Angles(OTS.XAngle, 0, 0)
+
+        waist.C0 = WaistC0 * angle
     end
 
     Cam.CFrame = newCf
@@ -88,6 +100,12 @@ end
 
 function OTS:SetWeaponMode(on)
     OTS.WeaponMode = on
+
+    if not on then
+        local char = Player.Character
+        local waist = char.UpperTorso.Waist
+        waist.C0 = WaistC0
+    end
 end
 
 function OTS:SetShoulder(val)
@@ -102,6 +120,14 @@ function OTS:Enable()
             OTS:Update(dt)
         end
     end)
+
+    local waist = Player.Character.UpperTorso.Waist
+    local rshoulder = Player.Character.RightUpperArm.RightShoulder
+    local lshoulder = Player.Character.LeftUpperArm.LeftShoulder
+
+    WaistC0 = waist.C0
+    RShoulderC0 = rshoulder.C0
+    LShoulderC0 = lshoulder.C0
 end
 
 function OTS:Disable()
