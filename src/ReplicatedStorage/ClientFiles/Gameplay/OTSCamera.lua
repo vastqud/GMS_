@@ -18,7 +18,7 @@ OTS.Settings = {
         ShoulderOffset = Vector3.new(2.5, 2.5, 10)
     },
     WeaponMode = {
-        ShoulderOffset = Vector3.new(2.5, 2.5, 7)
+        ShoulderOffset = Vector3.new(2.5, 1.85, 7)
     },
     Aimed = {
         ShoulderOffset = Vector3.new(1.75, 2.5, 5)
