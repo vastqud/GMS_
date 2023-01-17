@@ -92,7 +92,7 @@ function OTS:Update(dt)
         local waist = char.UpperTorso.Waist
         local angle = CFrame.Angles(OTS.XAngle, 0, 0)
 
-        waist.C0 = WaistC0 * angle
+        waist.C0 = waist.C0:Lerp(WaistC0 * angle, 0.85)
     end
 
     Cam.CFrame = newCf
