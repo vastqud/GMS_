@@ -20,7 +20,7 @@ local sprinting = false
 local cam = workspace.CurrentCamera
 
 do
-    local animateScript = char:WaitForChild("Animate")
+    --[[local animateScript = char:WaitForChild("Animate")
     local walk = animateScript:WaitForChild("walk")
     local run = animateScript:WaitForChild("run")
 
@@ -35,7 +35,7 @@ do
     newAnimRun:SetAttribute("LinearVelocity", Vector2.new(0, 12.8))
     newAnimWalk:SetAttribute("LinearVelocity", Vector2.new(0, 6.4))
 
-    newAnimWalk.Parent = walk; newAnimRun.Parent = run
+    newAnimWalk.Parent = walk; newAnimRun.Parent = run]]
 
     OTS:Enable()
 end
