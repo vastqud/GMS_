@@ -58,7 +58,7 @@ local function updateJoints(Character, player)
 			local Difference = Head.CFrame.Y - Point.Y
 
 			Neck.C0 = Neck.C0:lerp(NeckOriginC0 * CFrame.Angles(-(math.atan(Difference / Distance) * 0.2), (((HeadPosition - Point).Unit):Cross(TorsoLookVector)).Y * 0.4, 0), 0.5 / 2)
-			--Waist.C0 = Waist.C0:lerp(WaistOriginC0 * CFrame.Angles(-(math.atan(Difference / Distance) * 0.3), 0, 0), 0.5 / 2)
+			Waist.C0 = Waist.C0:lerp(WaistOriginC0 * CFrame.Angles(0, (((HeadPosition - Point).Unit):Cross(TorsoLookVector)).Y * 0.8, 0), 0.5 / 2)
 		end
 	end	
 end
