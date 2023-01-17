@@ -15,14 +15,32 @@ local Rand = Random.new(tick())
 
 SectorTrack.init()
 
+local function guntest(char)
+    task.wait(10)
+    local gun = ReplicatedStorage.rifle:Clone()
+    gun.Parent = char
+
+    local motor = Instance.new("Motor6D")
+    motor.Parent = char.UpperTorso
+    motor.Name = "grip"
+    motor.Part0 = char.UpperTorso
+    motor.Part1 = gun.grip
+
+    local anim = Instance.new("Animation")
+    anim.AnimationId = "rbxassetid://12179663864"
+    local track = char.Humanoid.Animator:LoadAnimation(anim)
+    track:Play()
+end
+
 local function PlayerAdded(player)
     player:SetAttribute("Armor", 50)
 
     local plot = Plots.new(player)
     plot:Load()
 
-    player.CharacterAdded:Connect(function()
+    player.CharacterAdded:Connect(function(char)
         plot:TeleportOwnerBlocking()
+        guntest(char)
     end)
 end
 
