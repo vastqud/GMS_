@@ -36,7 +36,6 @@ do
     newAnimWalk:SetAttribute("LinearVelocity", Vector2.new(0, 6.4))
 
     newAnimWalk.Parent = walk; newAnimRun.Parent = run]]
-
     OTS:Enable()
 end
 
@@ -174,6 +173,10 @@ Player.CharacterAdded:Connect(function(chara)
     char = chara
     hum = char:WaitForChild("Humanoid")
     hum.WalkSpeed = 0
+
+    if not OTS.Enabled then
+        OTS:Enable()
+    end
 end)
 RunService.Heartbeat:Connect(update)
 ContextActionService:BindAction("EnableWeapon", enableWeapon, false, Enum.KeyCode.G)

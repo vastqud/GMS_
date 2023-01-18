@@ -40,7 +40,7 @@ local function PlayerAdded(player)
 
     player.CharacterAdded:Connect(function(char)
         plot:TeleportOwnerBlocking()
-        guntest(char)
+        --guntest(char)
     end)
 end
 
